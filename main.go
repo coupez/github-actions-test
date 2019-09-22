@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	fmt.Printf("Hello github actions, I'm running on %s!\n", runtime.GOOS)
+	fmt.Printf("Hello github actions, I'm running on %s!!!\n", runtime.GOOS)
 }
