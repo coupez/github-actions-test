@@ -27,7 +27,7 @@ jobs:
     - name: Build and test run
       if: startsWith(matrix.os, 'windows') != true
       env:
-       APP: app-${{ matrix.os }}
+       APP: app-${{ github.ref }}-${{ matrix.os }}
       run: |
         go build -v -o dist/$APP .
         ./dist/$APP
@@ -35,7 +35,7 @@ jobs:
     - name: Build and test run (windows)
       if: startsWith(matrix.os, 'windows')
       env:
-       APP: app-${{ matrix.os }}.exe
+       APP: app-${{ github.ref }}-${{ matrix.os }}.exe
       run: |
         go build -v -o dist/%APP% .
         .\dist\%APP%
@@ -48,8 +48,16 @@ jobs:
 
     - name: GH Release
       uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
+      if: startsWith(github.ref, 'refs/tags/') && !startsWith(matrix.os, 'windows')
       with:
-        files: dist/app-${{ matrix.os }}
+        files: dist/app-${{ github.ref }}-${{ matrix.os }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: GH Release (windows)
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/') && startsWith(matrix.os, 'windows')
+      with:
+        files: dist/app-${{ github.ref }}-${{ matrix.os }}.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
