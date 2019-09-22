@@ -27,15 +27,31 @@ jobs:
     - name: Build and test run
       if: startsWith(matrix.os, 'windows') != true
       env:
-       APP: app-$${{ matrix.os }}
+       APP: dist/app-$${{ matrix.os }}
       run: |
-        go build -v -o $APP .
+        go build -v -o dist/$APP .
         ./$APP
 
     - name: Build and test run (windows)
       if: startsWith(matrix.os, 'windows')
       env:
-       APP: app-$${{ matrix.os }}.exe
+       APP: dist/app-$${{ matrix.os }}.exe
       run: |
-        go build -v -o %APP% .
-        .\%APP%
+        go build -v -o dist/%APP% .
+        .\dist\%APP%
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: dist
+        path: dist
+
+    - name: Release
+      uses: softprops/action-gh-release@v0.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        prerelease: true
+        body_path: ${{ github.workflow }}-CHANGELOG.txt
+        files: |
+          dist/*
