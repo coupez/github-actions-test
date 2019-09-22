@@ -27,15 +27,15 @@ jobs:
     - name: Build and test run
       if: startsWith(matrix.os, 'windows') != true
       env:
-       APP: dist/app-$${{ matrix.os }}
+       APP: app-${{ matrix.os }}
       run: |
         go build -v -o dist/$APP .
-        ./$APP
+        ./dist/$APP
 
     - name: Build and test run (windows)
       if: startsWith(matrix.os, 'windows')
       env:
-       APP: dist/app-$${{ matrix.os }}.exe
+       APP: app-${{ matrix.os }}.exe
       run: |
         go build -v -o dist/%APP% .
         .\dist\%APP%
