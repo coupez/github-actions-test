@@ -25,9 +25,17 @@ jobs:
         go get -v -t -d ./...
 
     - name: Build and test run
+      if: startsWith(matrix.os, 'windows') != true
       env:
-       APP: app-$${{ matrix.os }}$${{ startsWith(matrix.os, 'windows') == true and '.exe' }}
-      shell: bash
+       APP: app-$${{ matrix.os }}
       run: |
         go build -v -o $APP .
-        ./app
+        ./$APP
+
+    - name: Build and test run (windows)
+      if: startsWith(matrix.os, 'windows')
+      env:
+       APP: app-$${{ matrix.os }}.exe
+      run: |
+        go build -v -o %APP% .
+        .\%APP%
