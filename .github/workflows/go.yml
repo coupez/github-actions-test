@@ -25,6 +25,13 @@ jobs:
         go get -v -t -d ./...
 
     - name: Build and test run
+      if: startsWith(matrix.os, 'windows') == false
       run: |
         go build -v -o app .
         ./app
+
+    - name: Build and test run
+      if: startsWith(matrix.os, 'windows') == true
+      run: |
+        go build -v -o app.exe .
+        .\app.exe
